@@ -10,7 +10,7 @@
 <body>
     
     
-    <div class="container mt-4">
+    <div class="container mt-4 col-lg-5">
         
         
         <h5 class="card-header">Profile</h5>
@@ -27,18 +27,20 @@
                 <input type="text" id="lname" class="form-control" value="{{user.lastname}}">
                 </div>
                 <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" class="form-control" value={{user.password}}>
-                </div>
-                <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" class="form-control" value={{user.email}} readonly>
                 </div>
+                <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" value={{user.password}}>
+                </div>
+                
 
 
                  {{!-- <input type="text" name="email" value = {{user.email}}> --}}
             </fieldset>
-            <a href="/updateProfile/{{user.id}}" class="btn btn-primary">Update</a>
+            <a href="/updateProfile/{{user.id}}" class="btn btn-primary">Update</a>  &emsp14;
+            <a href="/auth/home" class="btn btn-primary">Home</a>
             {{!-- <button type="submit" class="btn btn-primary">Update</button> --}}
         </form> 
 
