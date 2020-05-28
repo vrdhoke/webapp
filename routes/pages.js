@@ -11,6 +11,7 @@ router.get("/register",(req,res)=>{
     res.render("register");
 });
 
+
 router.get("/changePassword",(req,res)=>{
     res.render("changePassword");
 });
