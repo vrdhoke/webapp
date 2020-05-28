@@ -1,0 +1,38 @@
+{
+  "name": "webapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --exit",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vrdhoke/webapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vrdhoke/webapp/issues"
+  },
+  "homepage": "https://github.com/vrdhoke/webapp#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "hbs": "^4.1.1",
+    "mocha": "^7.2.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.4",
+    "password-validator": "^5.0.3",
+    "request": "^2.88.2",
+    "superagent": "^5.2.2",
+    "supertest": "^4.0.2"
+  }
+}

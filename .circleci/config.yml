@@ -1,0 +1,31 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+jobs:
+  pr_check:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm test
+
+  build:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm test
+workflows:
+    pr-check:
+      jobs:
+        - pr_check
+
+    build_deploy:
+      jobs:
+        - build
