@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Add Book</title>
+</head>
+<body>
+    <div class="container mt-4 col-lg-5">
+        <div class="card">
+        <div class="card-header">
+            Add Book 
+        </div>
+        <div class="card-body">
+            <form action = "/sellbook/addbook" method="POST">
+                <div class="form-group">
+                    <label for="isbn">ISBN</label>
+                    <input type="text" class="form-control" name="isbn" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" class="form-control"  name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="author">Authors</label>
+                    <input type="text" class="form-control"  name="author" required>
+                </div>
+                <div class="form-group">
+                    <label for="pdate">Publication Date</label>
+                    <input type="date" class="form-control"  name="pdate" required>
+                </div>
+                <div class="form-group">
+                    <label for="qty">Quantity</label>
+                    <input type="number" class="form-control"  name="qty" required min="0" max="999">
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="number" class="form-control"  name="price" required step="0.01" min="0.01" max="9999.99">
+                </div>
+                {{#if message}}
+                <h4 class="alert danger">{{message}}</h4>
+                {{/if}}
+                <button type="submit" class="btn btn-primary">Add Book</button>
+                &emsp14;
+            <a href="/auth/home" class="btn btn-primary">Home</a>
+                </form>
+        </div>
+        </div>
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+</body>
+</html>

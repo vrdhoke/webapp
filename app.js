@@ -4,15 +4,17 @@ const  path = require("path");
 const app = express();
 const session = require("express-session");
 var bodyParser = require('body-parser')
+const db = require("./models");
+var helpers = require('handlebars-helpers')();
+// const db = mysql.createConnection({
+//     host: '127.0.0.1',
+//     user:'root',
+//     password:'12345678',
+//     database:'CloudApp',
+//     port:3306
+// });
 
 
-const db = mysql.createConnection({
-    host: '127.0.0.1',
-    user:'root',
-    password:'12345678',
-    database:'CloudApp',
-    port:3306
-});
 
 const publicDirectory = path.join(__dirname,'./public');
 
@@ -44,19 +46,24 @@ app.use(session({
     }
 }))
 
-db.connect((error)=>{
-    if(error)
-    {
-        console.log(error);
-    }else{
-        console.log("MySql Database Connected");
-    }
-});
+// db.connect((error)=>{
+//     if(error)
+//     {
+//         console.log(error);
+//     }else{
+//         console.log("MySql Database Connected");
+//     }
+// });
 
 app.use("/",require("./routes/pages"));
 app.use("/auth",require("./routes/auth"));
+app.use("/sellbook",require("./routes/sellbook"));
+app.use("/buybook",require("./routes/buybook"));
 
-app.listen(5000,()=>{
-    console.log("Server Started on port 5000");
-});
+db.sequelize.sync().then(()=>{
+    app.listen(5000,()=>{
+        console.log("Server Started on port 5000");
+    })
+}) 
+
 module.exports = app;

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Your Added Books</title>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card">
+        <div class="card-header">
+            Books Added by You <a href="/auth/home" class="btn btn-primary float-right">Home</a>
+        </div>
+        <div class="card-body">
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                        <th scope="col">ISBN</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Authors</th>
+                        <th scope="col">Publication Date</th>
+                        <th scope="col">Quanity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Added At</th>
+                        <th scope="col">Updated At</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each books}}
+                        <tr>
+                        <th scope="row">{{'sellbook.isbn'}}</th>
+                        <td>{{'sellbook.title'}}</td>
+                        <td>{{'sellbook.authors'}}</td>
+                        <td>{{'sellbook.publication_date'}}</td>
+                        <td>{{'sellbook.quantity'}}</td>
+                        <td>{{'sellbook.price'}}</td>
+                        <td>{{'sellbook.createdAt'}}</td>
+                        <td>{{'sellbook.updatedAt'}}</td>
+                        <td><a href="/sellbook/updatebook/{{'sellbook.id'}}" class="btn btn-primary">Update</a></td>
+                        </tr>
+                        {{/each}}
+                        
+                        
+                    </tbody>
+                    </table>
+                    {{!-- {{#each books}} 
+                        {{'sellbook.isbn'}} 
+                    {{/each}} --}}
+        </div>
+        </div>
+         
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+</body>
+</html>
