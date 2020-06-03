@@ -12,4 +12,4 @@
 
 
 
-4 Run npm test for testing the web application
+4 Run npm test for testing the web application..
