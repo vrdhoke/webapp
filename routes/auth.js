@@ -113,9 +113,12 @@ router.post('/register',async(req,res)=>{
 
 });
 
-router.get('/home',(req,res,next)=>{
-    let user = req.session.user;
-        if(user){
+router.get('/home',async(req,res,next)=>{
+    let suser = req.session.user;
+        if(suser){
+          let user = await model.User.findOne({
+            where: { email: suser.email },
+          });
             res.render('home',{ message:"Welcome to Portal  "+user.firstname});
             return;
         }

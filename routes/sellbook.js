@@ -7,6 +7,25 @@ const bcrypt = require("bcryptjs");
 router.post("/addbook",(req,res)=>{
     const user = req.session.user;
     const {isbn,title,author,pdate,qty,price} = req.body;
+
+
+    if(user){
+
+    // if (!(/^,?[a-zA-Z][a-zA-Z0-9]*,?$/.test(author)))
+    if (!(/^\w+\s*\w*(,\w+\s*\w*)*$/.test(author)))
+    {
+      return res.render("addbook", {
+        message: "Invalid Author names!",
+        isbn:isbn,
+        title:title,
+        pdate:pdate,
+        qty:qty,
+        price:price
+      });
+    }
+
+
+
     model.Book.create({
         isbn: isbn,
         title:title,
@@ -25,6 +44,10 @@ router.post("/addbook",(req,res)=>{
         .catch((err) => {
           console.log("Error while Adding Book : ", err);
         });
+
+      }else{
+        return res.redirect('/');
+      }
 })
 
 router.get("/getMyBooks",(req,res)=>{
@@ -33,15 +56,22 @@ router.get("/getMyBooks",(req,res)=>{
       model.User.findAll({where:{id:user.id},raw: true,include:['sellbook']})
       .then((User) => {
         console.log(User);
-        return res.render("mysellbooks", {
-          books:User
-        });
+        if(User.length==1 && User[0]["sellbook.id"]==null){
+          console.log("Hurray");
+          return res.render("mysellbooks", {
+            flag:null,message:"You have not added any book for sale"
+          });
+        }else{
+          return res.render("mysellbooks", {
+            books:User,flag:true
+          });
+        }
       })
       .catch((err) => {
         console.log("Error while fetching Book : ", err);
       });
     }else {
-      res.redirect('/');
+      return res.redirect('/');
     }
 
       // model.User.findAll({where:{id:"12"},raw: true,
@@ -83,13 +113,14 @@ router.post("/buyBooks/:id",(req,res)=>{
 router.get("/addbook",(req,res)=>{
   const user = req.session.user;
   if(user){
-    res.render("addbook");
-  }
+    return res.render("addbook");
+  }return res.redirect("/");
 })
 
 router.get("/updatebook/:id",async(req,res)=>{
   const user = req.session.user;
-
+  
+  if(user){
   let book = await model.Book.findOne({
     where: { id: req.params.id},
   });
@@ -98,12 +129,23 @@ router.get("/updatebook/:id",async(req,res)=>{
       ubook: book
     });
   }
+  }else return res.redirect("/");
 })
 
 
 router.post("/updatebook",async(req,res)=>{
   const user = req.session.user;
   const {id,isbn,title,author,publicationDate,qty,price} = req.body
+
+  
+
+  if (!(/^\w+\s*\w*(,\w+\s*\w*)*$/.test(author)))
+    {
+      return res.render("addbook", {
+        message: "Invalid Author names!",
+      });
+    }
+
   model.Book.update(
     { isbn:isbn,
       title:title,
@@ -131,15 +173,17 @@ router.post("/updatebook",async(req,res)=>{
 
 router.get("/deletebook/:id",async(req,res)=>{
   const user = req.session.user;
-
+  if(user){
   let book = await model.Book.destroy({
     where: { id: req.params.id},
   });
   if (book) {
-    return res.render('home', { updatemsg :"Book Deleted Successful"}); 
+    return res.render('home', { updatemsg :"Book Deleted Successfully"}); 
+  }
+  }else {
+    return res.redirect("/");
   }
 })
-
 
 
 module.exports = router;

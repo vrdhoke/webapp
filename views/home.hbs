@@ -13,13 +13,43 @@
     <div class="container">
         <h1 class="display-4">{{message}}</h1>
         <p class="lead">To view or update your account details please click on profile</p>
+        <a href="/auth/profile" class="btn btn-primary">Profile</a>&nbsp;
+        <a href="/logout"  class="btn btn-primary float-right">Logout</a><br><br>
+        <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Sell Books</h5>
+                <p class="card-text">Click on Sell Book for adding book to the portal</p>
+                <a href="/sellbook/addbook" class="btn btn-primary">Sell Book</a><br><br>
+                <p class="card-text">Click on My Books for viewing the books you added</p>
+                <a href="/sellbook/getMyBooks" class="btn btn-primary">My Books</a><br>
+            </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Buy Books</h5>
+                <p class="card-text">Click on buy book to add book to the Cart.</p>
+                <a href="/buybook/getAllBooks" class="btn btn-primary">Buy Books</a>
+                
+                <a href="/buybook/myCart" class="btn btn-primary float-right">Cart</a>
+            </div>
+            </div>
+        </div>
+        </div>
+
+
+
+
+         
         
-        <a href="/auth/profile" class="btn btn-primary">Profile</a>&nbsp; 
-        <a href="/sellbook/addbook" class="btn btn-primary">Sell Book</a>
-        <a href="/sellbook/getMyBooks" class="btn btn-primary">My Books</a>
-        <a href="/buybook/getAllBooks" class="btn btn-primary">Buy Books</a>
-        <a href="/buybook/myCart" class="btn btn-primary">Cart</a>
-        &nbsp;   <a href="/logout"  class="btn btn-primary float-right">Logout</a>
+        
+        <br><br>
+        
+        
+        &nbsp;   
         <br><br>
         <h4>{{updatemsg}}</h4>
     </div>
