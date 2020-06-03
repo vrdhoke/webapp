@@ -10,6 +10,10 @@ const {describe} = require('mocha');
 
 const assert = require('assert');
 
+before((done) => {
+  server = app.listen(5000, done);
+});
+
 describe('Simple test suite:', function() {
     it('1 === 1 should be true', function() {
         assert(1 === 1);
@@ -25,7 +29,9 @@ describe("Main page", function (done) {
   });
 });
 
-
+after((done) => {
+  server.close(done);
+});
 
 // const userCredentials = {
 //     email: 'vaibhavdhoke1@gmail.com', 
