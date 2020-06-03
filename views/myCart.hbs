@@ -11,20 +11,23 @@
     <div class="container mt-4">
         <div class="card">
         <div class="card-header">
-            Cart 
+            Cart <a href="/auth/home" class="btn btn-primary float-right">Home</a>
         </div>
         <div class="card-body">
+            <h3>{{message}}</h3>
                 <table class="table">
                     <thead class="thead-dark">
+                        {{#if flag}}
                         <tr>
                         <th scope="col">ISBN</th>
                         <th scope="col">Title</th>
                         <th scope="col">Authors</th>
                         <th scope="col">Publication Date</th>
-                        <th scope="col">Quanity Ordered</th>
+                        <th scope="col">Quantity Ordered</th>
                         <th scope="col">Unit Price</th>
-                        
+                        <th scope="col">Action</th>
                         </tr>
+                        {{/if}}
                     </thead>
                     <tbody>
                         {{#each books}}
@@ -35,19 +38,20 @@
                         <td>{{'books.publication_date'}}</td>
                         <td>{{'books.UserOrders.quantity'}}</td>
                         <td>{{'books.price'}}</td>
-                        {{!-- <td><a href="/buybook/{{id}}" class="btn btn-primary">Buy</a></td> --}}
+                        <td><a href="/buybook/cartupdate/{{'books.id'}}" class="btn btn-primary">Update</a></td>
                         </tr>
                         {{/each}}
                         
-                        
+                    
                     </tbody>
                     </table>
                     {{!-- {{#each books}} 
                         {{'sellbook.isbn'}} 
                     {{/each}} --}}
         </div>
+        
         </div>
-         <a href="/auth/home" class="btn btn-primary float-right">Home</a>
+         
     </div>
     
 

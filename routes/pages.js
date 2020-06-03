@@ -1,5 +1,5 @@
 const express = require("express");
-
+const model = require("../models")
 const router = express.Router();
 
 router.get("/",(req,res)=>{
@@ -13,19 +13,29 @@ router.get("/register",(req,res)=>{
 
 
 router.get("/changePassword",(req,res)=>{
-    res.render("changePassword");
+    let user = req.session.user;
+    if(user){
+        res.render("changePassword");
+    }else{
+        res.redirect('/'); 
+    }
 });
 
 router.get("/login",(req,res)=>{
     res.render("login");
 });
 
-router.get("/updateprofile/:id",(req,res)=>{
+router.get("/updateprofile/:id",async(req,res)=>{
     console.log(req.params.id);
     
-    return res.render("updateprofile",{
-        id:req.params.id
-    });
+    let user = await model.User.findOne({
+        where: { id:req.params.id},
+      });
+      if (user) {
+        return res.render("updateprofile", {
+          upuser: user
+        });
+      }
 });
 
 

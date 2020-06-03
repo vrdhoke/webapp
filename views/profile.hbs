@@ -15,7 +15,7 @@
         
         <h5 class="card-header">Profile</h5>
         <br><br>
-        <form action='/updateProfile/{{user.id}}' method="GET">
+        <form action='/updateprofile/{{user.id}}' method="GET">
             <fieldset disabled>
                 <div class="form-group">
                 <label for="fname">First Name</label>
@@ -39,8 +39,8 @@
 
                  {{!-- <input type="text" name="email" value = {{user.email}}> --}}
             </fieldset>
-            <a href="/updateProfile/{{user.id}}" class="btn btn-primary">Update</a>  &emsp14;
-            <a href="/auth/home" class="btn btn-primary">Home</a>
+            <a href="/updateprofile/{{user.id}}" class="btn btn-primary">Update</a>  &emsp14;
+            <a href="/auth/home" class="btn btn-primary float-right">Home</a>
             {{!-- <button type="submit" class="btn btn-primary">Update</button> --}}
         </form> 
 

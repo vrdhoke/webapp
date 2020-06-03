@@ -13,10 +13,10 @@
     <div class="container mt-4 col-lg-5">
         <div class="card">
         <div class="card-header">
-            Buy Book 
+            Update Order <a href="/auth/home" class="btn btn-primary float-right">Home</a>
         </div>
         <div class="card-body">
-            <form action = "/buybook/buy" method="POST">
+            <form action = "/buybook/cartupdate" method="POST">
                 <div class="form-group">
                     <input type="hidden" class="form-control" name="id" value="{{ubook.id}}" readonly>
                     <label for="isbn">ISBN</label>
@@ -40,19 +40,19 @@
                 </div>
                 <div class="form-group">
                     <label for="qty">Available Quantity</label>
-                    <input type="number" class="form-control"  name="aqty"   value="{{ubook.quantity}}" readonly>
+                    <input type="number" class="form-control"  name="aqty" value="{{aqty}}" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="qty">Please enter the Quantity you want</label>
-                    <input type="number" class="form-control"  name="qty" required>
+                    <label for="qty">Update Quantity</label>
+                    <input type="number" class="form-control"  name="qty" value="{{qty}}" required min="1">
                 </div>
                 
                 {{#if message}}
                 <h4 class="alert danger">{{message}}</h4>
                 {{/if}}
-                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                <button type="submit" class="btn btn-primary">Update Order</button>
                 &emsp14;
-            <a href="/auth/home" class="btn btn-primary">Home</a>
+            
              {{!-- <a href="/sellbook/deletebook/{{ubook.id}}" class="btn btn-primary">Buy</a> --}}
                 </form>
         </div>

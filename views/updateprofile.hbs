@@ -12,32 +12,33 @@
     
     <div class="container mt-4 col-lg-5">
         <h5 class="card-header">Update Profile</h5><br><br>
-        <form action='/auth/updateProfile' method="POST">
+        <form action='/auth/updateprofile' method="POST">
             <fieldset>
                 <div class="form-group ">
                 <label for="fname">First Name</label>
-                <input type="text" id="fname" class="form-control" name="fname" required>
+                <input type="text" id="fname" class="form-control" name="fname" value="{{upuser.firstname}}" required>
                 </div>
                 
                 <div class="form-group">
                 <label for="lname">Last Name</label>
-                <input type="text" id="lname" class="form-control" name="lname" required>
+                <input type="text" id="lname" class="form-control" name="lname" value="{{upuser.lastname}}" required>
                 </div>
                  <input type="hidden" name="id" value = {{id}}>
             </fieldset>
-           
+            {{#if message}}
+            <h4 class="alert">{{message}}</h4>
+            {{/if}}
             <button type="submit" class="btn btn-primary">Update</button>
         </form> 
         <br><br>
+        
         <a href="/auth/home" class="btn btn-primary">Home</a> &emsp14;
         <a href="/changePassword" class="btn btn-primary float-right">Change Password</a>
 
     </div>
     
     
-    {{#if message}}
-        <h4 class="alert">{{message}}</h4>
-    {{/if}}
+    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 </body>

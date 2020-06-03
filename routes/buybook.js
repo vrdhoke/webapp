@@ -25,9 +25,9 @@ router.get("/getAllBooks",async(req,res)=>{
     //     console.log("Error while fetching Book : ", err);
     //   });
     const result = await model.sequelize.query(
-      "SELECT firstName,lastName,Books.id,isbn,title,authors,publication_date,quantity,price FROM Books join Users on Books.sellerid=Users.id where Books.sellerid != (:id) order by isbn,price",
+      "SELECT firstName,lastName,Books.id,isbn,title,authors,publication_date,quantity,price FROM Books join Users on Books.sellerid=Users.id where Books.sellerid != (:id) and Books.quantity != (:q) order by isbn,price",
       {
-        replacements: { id: user.id },
+        replacements: { id: user.id,q:0 },
         type: model.sequelize.QueryTypes.SELECT,
       }
     );
@@ -60,15 +60,26 @@ router.get("/myCart",async(req,res)=>{
   // const userOrders = await model.UserOrders.findAll({
   //   where: { userid:user.id },raw:true
   // });
-
+  if(user){
   const user1 = await model.User.findAll({
     where: { id:user.id },include:['books'],raw:true
   }).then((User) => {
-    console.log(User);
-    return res.render("myCart", {
-      books:User
-    });
+    console.log(User[0]["books.id"]);
+    if(User.length==1 && User[0]["books.id"]==null){
+      console.log("Hurray");
+      return res.render("myCart", {
+        flag:null,message:"Your Cart is Empty"
+      });
+    }else{
+      return res.render("myCart", {
+        books:User,flag:true
+      });
+    }
+    
   })
+  }else{
+    res.redirect('/');
+  }
 
   // if(user){
   //   return res.render("buybook",{
@@ -187,5 +198,81 @@ router.post("/buy",async(req,res)=>{
   // include:['sellbook']})
   // .then(sellbooks=>res.json(sellbooks))
 })
+
+router.get("/cartupdate/:id",async(req,res)=>{
+  const user = req.session.user;
+
+  if(user){
+
+  let book = await model.Book.findOne({
+    where: { id: req.params.id},
+  });
+  const userOrders = await model.UserOrders.findOne({
+    where: { userid:user.id,bookid:req.params.id }
+  });
+
+  if (book) {
+    return res.render("myCartUpdate", {
+      ubook: book,qty:userOrders.quantity, aqty:book.quantity
+    });
+  }
+
+  }else{
+    res.redirect('/');
+  }
+})
+
+router.post("/cartupdate",async(req,res)=>{
+  const user = req.session.user;
+  const updatedQuanity = req.body.qty;
+  const id = req.body.id;
+
+  let book = await model.Book.findOne({
+    where: { id: id},
+  });
+
+  const userOrders = await model.UserOrders.findOne({
+    where: { userid:user.id,bookid:id }
+  });
+
+  if(parseInt(updatedQuanity)-userOrders.quantity > book.quantity){
+    return res.render("myCartUpdate", {
+      message: "This quantity is not available"
+    });
+  }
+
+  const difference = parseInt(updatedQuanity) - userOrders.quantity;
+
+  await model.UserOrders.update({
+    quantity:updatedQuanity
+  },
+  {
+    where:{
+      bookid:id, userid:user.id
+    }
+  })
+  
+   
+  await model.Book.update(
+    { 
+      quantity:book.quantity - difference
+    },
+    {
+      where: {
+        id:id
+      }
+    }
+  )
+    
+  const user1 = await model.User.findAll({
+    where: { id:user.id },include:['books'],raw:true
+  }).then((User) => {
+    console.log(User);
+    return res.render("myCart", {
+      books:User,flag:true
+    });
+  })
+})
+
 
 module.exports = router;

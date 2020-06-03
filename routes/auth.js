@@ -21,8 +21,26 @@ router.post('/register',async(req,res)=>{
     console.log(req.body);
     
     const {firstname,lastname,email,password} = req.body;
+    if (!(/^[A-Za-z]+([\ A-Za-z]+)*$/.test(firstname)))
+    {
+      return res.render("register", {
+        message: "First Name is Invalid!",
+      });
+    }
+    if (!(/^[A-Za-z]+([\ A-Za-z]+)*$/.test(lastname)))
+    {
+      return res.render("register", {
+        message: "Last Name is Invalid!",
+      });
+    }
+    if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)))
+    {
+      return res.render("register", {
+        message: "Email address is invalid!",
+      });
+    }
 
-    
+      
     let user = await model.User.findOne({
         where: { email: email },
       });
@@ -48,7 +66,7 @@ router.post('/register',async(req,res)=>{
       })
         .then((newUsers) => {
           // console.log(newUsers);
-          return res.render("register", {
+          return res.render("login", {
             message: "User registered",
           });
         })
@@ -105,18 +123,25 @@ router.get('/home',(req,res,next)=>{
     
 })
 
-router.get('/profile',(req,res,next)=>{
+router.get('/profile',async(req,res,next)=>{
     
-    let user = req.session.user;
-        if(user){
-            return res.render('profile', { user :user});
-        }
-        res.redirect('/');
+    let suser = req.session.user;
+    if (suser) {
+    let user = await model.User.findOne({
+      where: { id:suser.id},
+    });
+      return res.render("profile", {
+        user: user
+      });
+    }else res.redirect('/');
+        
 })
 
 
-router.post('/updateprofile',(req,res,next)=>{
+router.post('/updateprofile',async(req,res,next)=>{
     let user = req.session.user;
+
+    if(user){
 
     const id = req.body.id;
     const fname = req.body.fname;
@@ -124,8 +149,20 @@ router.post('/updateprofile',(req,res,next)=>{
     // const password = req.body.password;
     console.log(fname+" "+lname);
     console.log("id "+id);
+    if (!(/^[A-Za-z]+([\ A-Za-z]+)*$/.test(fname)))
+    {
+      return res.render("updateprofile", {
+        message: "First Name is Invalid!",
+      });
+    }
+    if (!(/^[A-Za-z]+([\ A-Za-z]+)*$/.test(lname)))
+    {
+      return res.render("updateprofile", {
+        message: "Last Name is Invalid!",
+      });
+    }
     
-    model.User.update(
+    await model.User.update(
         { firstname:fname,
         lastname:lname},
         {
@@ -143,7 +180,9 @@ router.post('/updateprofile',(req,res,next)=>{
         .catch((err) => {
             return res.render('home', { updatemsg :"Update UnSuccessful"}); 
         });
-
+      }else{
+        res.redirect('/');
+      }
 })
 
 router.post('/updatePassword',async (req,res,next)=>{
