@@ -25,6 +25,7 @@
                         <th scope="col">Price</th>
                         <th scope="col">Seller Name</th>
                         <th scope="col">Action</th>
+                        <th scope="col">View</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,6 +39,7 @@
                         <td>{{price}}</td>
                         <td>{{firstName}} {{lastName}}</td>
                         <td><a href="/buybook/{{id}}" class="btn btn-primary">Buy</a></td>
+                        <td><a href="/buybook/getImage/{{id}}" class="btn btn-primary">View Images</a></td>
                         </tr>
                         {{/each}}
                         

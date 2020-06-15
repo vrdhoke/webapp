@@ -44,7 +44,12 @@ module.exports = (sequelize,DataTypes) => {
             through: 'UserOrders',
             as: 'users',
             foreignKey: 'bookid'
-          });
+        });
+        Book.hasMany(models.Image, {
+            onDelete: "cascade",
+            as: "images",
+            foreignKey: "bookid",
+        });
     };
     return Book;
 };

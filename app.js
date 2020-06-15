@@ -59,6 +59,7 @@ app.use("/",require("./routes/pages"));
 app.use("/auth",require("./routes/auth"));
 app.use("/sellbook",require("./routes/sellbook"));
 app.use("/buybook",require("./routes/buybook"));
+// app.use("/image",require("./routes/imageupload"));
 
 db.sequelize.sync().then(()=>{
     app.listen(5000,()=>{

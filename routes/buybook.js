@@ -4,6 +4,8 @@ const model = require("../models")
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
+const upload = require("../routes/imageupload");
+const aws = require("aws-sdk");
 
 
 router.get("/getAllBooks",async(req,res)=>{
@@ -274,5 +276,65 @@ router.post("/cartupdate",async(req,res)=>{
   })
 })
 
+
+router.get('/getImage/:id',async(req,res)=>{
+
+      aws.config.update({
+        secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
+        accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
+        region: "us-east-1",
+      });
+      
+      const s3 = new aws.S3();
+      const user = req.session.user;
+
+      // const userOrders = await model.UserOrders.findAll({
+      //   where: { userid:user.id },raw:true
+      // });
+      if(user){
+      const images = await model.Image.findAll({
+        where: { bookid:req.params.id },raw:true
+      })
+      console.log(images)
+      var s3image = [];
+      for (var i = 0; i < images.length; i++) { 
+        console.log("Key "+images[i].s3imagekey);
+        await getImage(images[i].s3imagekey)
+        .then((img)=>{
+            s3image.push(encode(img.Body));
+            // let image="<img src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
+            // html=html+image;
+          
+        }).catch((e)=>{
+          console.log("Error Vaibhav");
+          res.send(e)
+        })
+      }
+      console.log(s3image.length);
+      return res.render("viewImages", {
+        simages: s3image
+      });
+      }else{
+        res.redirect('/');
+      }
+
+
+  async function getImage(s3key){
+          const data =  s3.getObject(
+            {
+                Bucket: 'vaibhavdhokes3',
+                Key: s3key
+            }
+            
+          ).promise();
+          return data;
+        }
+  
+  function encode(data){
+            let buf = Buffer.from(data);
+            let base64 = buf.toString('base64');
+            return base64
+        }
+  })
 
 module.exports = router;

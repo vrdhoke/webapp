@@ -68,16 +68,18 @@
                     <label for="price">Price</label>
                     <input type="number" class="form-control"  name="price" required value="{{ubook.price}}" step="0.01" min="0.01" max="9999.99">
                 </div>
+                
                 {{#if message}}
                 <h4 class="alert danger">{{message}}</h4>
                 {{/if}}
                 <button type="submit" class="btn btn-primary">Update</button>
                 &emsp14;
-            
+
              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                 Delete Book
             </button>
                 </form>
+                <a href="/sellbook/updateImage/{{ubook.id}}" class="btn btn-primary float-right">Update Images</a>
         </div>
         </div>
     </div>
