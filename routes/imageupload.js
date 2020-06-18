@@ -5,11 +5,13 @@ const models = require("../models");
 const express = require("express");
 const { Op } = require("sequelize");
 const router = express.Router();
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.json')[env];
 
 aws.config.update({
   secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
   accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
-  region: "us-east-1",
+  region: config.region,
 });
 
 const s3 = new aws.S3();
@@ -32,7 +34,7 @@ const upload = multer({
   fileFilter,
   storage: multerS3({
     s3,
-    bucket: "vaibhavdhokes3",
+    bucket: config.s3bucket,
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.originalname });
     },
@@ -44,57 +46,6 @@ const upload = multer({
 
 // const singleUpload = upload.single("image");
 
-router.post("/uploadimage", async (req, res) => {
-    // singleUpload(req, res, function (err) {
-    //   if (err) {
-    //     return res.status(422).send({
-    //       errors: [{ title: "File Upload Error", detail: err.message }],
-    //     });
-    //   }
-    //   models.Image.create({
-    //     s3imagekey: req.file.key,
-    //     fileName: req.file.originalname,
-    //     contentType: req.file.mimetype,
-        
-    //   })
-    //     .then((newBook) => {
-    //       console.log(newBook);
-    //     })
-    //     .catch((err) => {
-    //       console.log("Error UpLoading Image: ", err);
-    //     });
-    //   return res.json({ imageUrl: req.file.key });
-    // });
-  });
-
-
-  router.get('/getImage',(req,res)=>{
-    async function getImage(){
-            const data =  s3.getObject(
-              {
-                  Bucket: 'vaibhavdhokes3',
-                  Key: '1592100348951'
-              }
-              
-            ).promise();
-            return data;
-          }
-    getImage()
-          .then((img)=>{
-              let image="<img src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
-              let startHTML="<html><body></body>";
-              let endHTML="</body></html>";
-              let html=startHTML + image + endHTML;
-            res.send(html)
-          }).catch((e)=>{
-            res.send(e)
-          })
-    function encode(data){
-              let buf = Buffer.from(data);
-              let base64 = buf.toString('base64');
-              return base64
-          }
-    })
   
 module.exports = upload;
 

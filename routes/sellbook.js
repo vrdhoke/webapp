@@ -7,6 +7,8 @@ const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const upload = require("../routes/imageupload");
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.json')[env];
 
 // const singleUpload = upload.array("image",3);
 
@@ -240,7 +242,7 @@ router.get("/updateImage/:id",async(req,res)=>{
   aws.config.update({
     secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
     accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
-    region: "us-east-1",
+    region: config.region,
   });
   
   const s3 = new aws.S3();
@@ -273,7 +275,7 @@ router.get("/updateImage/:id",async(req,res)=>{
       async function getImage(s3key){
         const data =  s3.getObject(
           {
-              Bucket: 'vaibhavdhokes3',
+              Bucket: config.s3bucket,
               Key: s3key
           }
         ).promise();
@@ -292,7 +294,7 @@ router.get("/deleteImage/:id",async(req,res)=>{
   aws.config.update({
     secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
     accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
-    region: "us-east-1",
+    region: config.region,
   });
   
   const s3 = new aws.S3();
@@ -302,7 +304,7 @@ router.get("/deleteImage/:id",async(req,res)=>{
     })
     
     var params = {
-      Bucket: 'vaibhavdhokes3', 
+      Bucket: config.s3bucket, 
       Key: req.params.id
      };
 
@@ -311,7 +313,7 @@ router.get("/deleteImage/:id",async(req,res)=>{
       else     console.log(data);           // successful response
     });
 
-    return res.render("updateBook", {
+    return res.render("updatebook", {
       message:"Image Deleted Successfully"
     });
 

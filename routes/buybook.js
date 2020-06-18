@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 const upload = require("../routes/imageupload");
 const aws = require("aws-sdk");
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.json')[env];
 
 
 router.get("/getAllBooks",async(req,res)=>{
@@ -282,7 +284,7 @@ router.get('/getImage/:id',async(req,res)=>{
       aws.config.update({
         secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
         accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
-        region: "us-east-1",
+        region: config.region,
       });
       
       const s3 = new aws.S3();
@@ -322,7 +324,7 @@ router.get('/getImage/:id',async(req,res)=>{
   async function getImage(s3key){
           const data =  s3.getObject(
             {
-                Bucket: 'vaibhavdhokes3',
+                Bucket: config.s3bucket,
                 Key: s3key
             }
             
