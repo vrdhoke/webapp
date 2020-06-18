@@ -9,8 +9,8 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 
 aws.config.update({
-  secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
-  accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
+  secretAccessKey: config.secretkey,
+  accessKeyId: config.accesskey,
   region: config.region,
 });
 

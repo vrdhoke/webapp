@@ -224,7 +224,30 @@ router.post("/updatebook",async(req,res)=>{
 
 router.get("/deletebook/:id",async(req,res)=>{
   const user = req.session.user;
+  aws.config.update({
+    secretAccessKey: config.secretkey,
+    accessKeyId: config.accesskey,
+    region: config.region,
+  });
+  
+  const s3 = new aws.S3();
   if(user){
+  const images = await model.Image.findAll({
+    where: { bookid:req.params.id },raw:true
+  });
+  console.log(images);
+  for (var i = 0; i < images.length; i++) { 
+
+    var params = {
+      Bucket: config.s3bucket, 
+      Key: images[i].s3imagekey
+     };
+
+    s3.deleteObject(params, function(err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else     console.log(data);           // successful response
+    });
+  }
   let book = await model.Book.destroy({
     where: { id: req.params.id},
   });
@@ -240,8 +263,8 @@ router.get("/deletebook/:id",async(req,res)=>{
 router.get("/updateImage/:id",async(req,res)=>{
   const user = req.session.user;
   aws.config.update({
-    secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
-    accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
+    secretAccessKey: config.secretkey,
+    accessKeyId: config.accesskey,
     region: config.region,
   });
   
@@ -292,8 +315,8 @@ router.get("/updateImage/:id",async(req,res)=>{
 router.get("/deleteImage/:id",async(req,res)=>{
   const user = req.session.user;
   aws.config.update({
-    secretAccessKey: "9Ks68JxlCCjqyJf8uKJ+JGiZukLB7rTOcmBLBpTj",
-    accessKeyId: "AKIAYFKCXGXDS2ABFVUA",
+    secretAccessKey: config.secretkey,
+    accessKeyId: config.accesskey,
     region: config.region,
   });
   
