@@ -2,17 +2,41 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
 jobs:
-  pr_check:
-    executor:
-      name: node/default
+  install-package:
+    working_directory: ~/webapp
+    docker:
+      - image: cimg/base:2020.01
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm test
-
-  build:
+      - run:
+          name: Install Packages
+          command: |
+            sudo apt update
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Build Artifact
+          command: |
+            mkdir codedeploy_artifact
+            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip /Users/vaibhavdhoke/Documents/CloudNewRepo/webapp/*
+            mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
+      - run:
+          name: Copy Artifact
+          command: |
+            aws s3 sync ./codedeploy_artifact s3://${S3_CODEDEPLOYMENT_BUCKET}
+      - run:
+          name: Code deploy API call
+          command: |
+            aws deploy create-deployment \
+            --application-name ${CODEDEPLOY_APPLICATION_NAME} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUPNAME} \
+            --description "CSYE 6225 - Code Deploy" \
+            --s3-location bucket-${S3_CODEDEPLOYMENT_BUCKET},key=csye6225-webapp-${CIRCLE_BUILD_NUM}.zip,bundleType=zip \
+            --region ${aws_region} \
+            --output json
+  pr_check:
     executor:
       name: node/default
     steps:
@@ -26,6 +50,9 @@ workflows:
       jobs:
         - pr_check
 
-    build_deploy:
+    install-package:
       jobs:
-        - build
+        - install-package:
+            filters:
+                branches:
+                  only: master
