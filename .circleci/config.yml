@@ -27,6 +27,7 @@ jobs:
       - run:
           name: Copy Artifact
           command: |
+            cd ..
             aws s3 sync ./codedeploy_artifact s3://${S3_CODEDEPLOYMENT_BUCKET}
       - run:
           name: Code deploy API call
