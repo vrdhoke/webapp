@@ -18,13 +18,16 @@ jobs:
       - run:
           name: Build Artifact
           command: |
+            cp appspec.yml ..
+            cp -R scripts ..
+            cd ..
+            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip webapp appspec.yml scripts
             mkdir codedeploy_artifact
-            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip webapp/ appspec.yml scripts/
             mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
       - run:
           name: Copy Artifact
           command: |
-            aws s3 sync ./codedeploy_artifact s3://${S3_CODEDEPLOYMENT_BUCKET}
+            aws s3 sync codedeploy_artifact s3://${S3_CODEDEPLOYMENT_BUCKET}
       - run:
           name: Code deploy API call
           command: |
