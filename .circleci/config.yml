@@ -24,10 +24,10 @@ jobs:
             zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip webapp appspec.yml scripts
             mkdir codedeploy_artifact
             mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
+            mv codedeploy_artifact webapp
       - run:
           name: Copy Artifact
           command: |
-            cd ..
             aws s3 sync ./codedeploy_artifact s3://${S3_CODEDEPLOYMENT_BUCKET}
       - run:
           name: Code deploy API call
@@ -37,7 +37,7 @@ jobs:
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --deployment-group-name ${CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUPNAME} \
             --description "CSYE 6225 - Code Deploy" \
-            --s3-location bucket-${S3_CODEDEPLOYMENT_BUCKET},key=csye6225-webapp-${CIRCLE_BUILD_NUM}.zip,bundleType=zip \
+            --s3-location bucket=${S3_CODEDEPLOYMENT_BUCKET},key=csye6225-webapp-${CIRCLE_BUILD_NUM}.zip,bundleType=zip \
             --region ${aws_region} \
             --output json
   pr_check:

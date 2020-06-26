@@ -1,3 +1,5 @@
 #!/bin/bash
-cd /home/ubuntu/webapp
+mv /home/ubuntu/webapp/config /home/ubuntu/csye6225-webapp/webapp
+cd /home/ubuntu/csye6225-webapp/webapp
+npm install forever -g
 npm install
