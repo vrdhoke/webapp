@@ -19,7 +19,7 @@ jobs:
           name: Build Artifact
           command: |
             mkdir codedeploy_artifact
-            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip /Users/vaibhavdhoke/Documents/CloudNewRepo/webapp/*
+            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip webapp/ appspec.yml scripts/
             mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
       - run:
           name: Copy Artifact
@@ -52,7 +52,5 @@ workflows:
 
     install-package:
       jobs:
-        - install-package:
-            filters:
-                branches:
-                  only: master
+        - install-package
+            
