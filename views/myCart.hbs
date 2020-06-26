@@ -26,6 +26,7 @@
                         <th scope="col">Quantity Ordered</th>
                         <th scope="col">Unit Price</th>
                         <th scope="col">Action</th>
+                        <th scope="col">View</th>
                         </tr>
                         {{/if}}
                     </thead>
@@ -39,6 +40,8 @@
                         <td>{{'books.UserOrders.quantity'}}</td>
                         <td>{{'books.price'}}</td>
                         <td><a href="/buybook/cartupdate/{{'books.id'}}" class="btn btn-primary">Update</a></td>
+                        <td><a href="/buybook/getImage/{{'books.id'}}" class="btn btn-primary">View Images</a></td>
+                        </tr>
                         </tr>
                         {{/each}}
                         
