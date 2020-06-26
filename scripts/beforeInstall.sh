@@ -9,3 +9,4 @@
 # echo $processId
 # # processId = lsof -i tcp:3000
 # kill $processId
+rm  -rf /home/ubuntu/csye6225-webapp 
