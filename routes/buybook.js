@@ -281,11 +281,11 @@ router.post("/cartupdate",async(req,res)=>{
 
 router.get('/getImage/:id',async(req,res)=>{
 
-      aws.config.update({
-        secretAccessKey: config.secretkey,
-        accessKeyId: config.accesskey,
-        region: config.region,
-      });
+      // aws.config.update({
+      //   secretAccessKey: config.secretkey,
+      //   accessKeyId: config.accesskey,
+      //   region: config.region,
+      // });
       
       const s3 = new aws.S3();
       const user = req.session.user;

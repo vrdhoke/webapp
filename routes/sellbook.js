@@ -224,11 +224,11 @@ router.post("/updatebook",async(req,res)=>{
 
 router.get("/deletebook/:id",async(req,res)=>{
   const user = req.session.user;
-  aws.config.update({
-    secretAccessKey: config.secretkey,
-    accessKeyId: config.accesskey,
-    region: config.region,
-  });
+  // aws.config.update({
+  //   secretAccessKey: config.secretkey,
+  //   accessKeyId: config.accesskey,
+  //   region: config.region,
+  // });
   
   const s3 = new aws.S3();
   if(user){
@@ -262,11 +262,11 @@ router.get("/deletebook/:id",async(req,res)=>{
 
 router.get("/updateImage/:id",async(req,res)=>{
   const user = req.session.user;
-  aws.config.update({
-    secretAccessKey: config.secretkey,
-    accessKeyId: config.accesskey,
-    region: config.region,
-  });
+  // aws.config.update({
+  //   secretAccessKey: config.secretkey,
+  //   accessKeyId: config.accesskey,
+  //   region: config.region,
+  // });
   
   const s3 = new aws.S3();
   if(user){
@@ -314,11 +314,11 @@ router.get("/updateImage/:id",async(req,res)=>{
 
 router.get("/deleteImage/:id",async(req,res)=>{
   const user = req.session.user;
-  aws.config.update({
-    secretAccessKey: config.secretkey,
-    accessKeyId: config.accesskey,
-    region: config.region,
-  });
+  // aws.config.update({
+  //   secretAccessKey: config.secretkey,
+  //   accessKeyId: config.accesskey,
+  //   region: config.region,
+  // });
   
   const s3 = new aws.S3();
   if(user){

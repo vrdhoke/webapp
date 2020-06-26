@@ -8,11 +8,11 @@ const router = express.Router();
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 
-aws.config.update({
-  secretAccessKey: config.secretkey,
-  accessKeyId: config.accesskey,
-  region: config.region,
-});
+// aws.config.update({
+//   secretAccessKey: config.secretkey,
+//   accessKeyId: config.accesskey,
+//   region: config.region,
+// });
 
 const s3 = new aws.S3();
 
