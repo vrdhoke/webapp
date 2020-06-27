@@ -50,11 +50,14 @@ jobs:
             - run: npm install
             - run: npm test
 workflows:
-    pr-check:
+  build_deploy:
       jobs:
         - pr_check
-
-    install-package:
-      jobs:
-        - install-package
+        - install-package:
+            filters:
+              branches:
+                only: master
+            requires:
+              - pr-check
+             
             
