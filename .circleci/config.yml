@@ -58,6 +58,6 @@ workflows:
               branches:
                 only: master
             requires:
-              - pr-check
+              - pr_check
              
             
