@@ -46,10 +46,10 @@ jobs:
     steps:
       - checkout
       - run: 
-        name: Unit Test
-        command: |
-          npm install
-          npm test
+          name: Unit Test
+          command: |
+            npm install
+            npm test
 workflows:
   build_deploy:
       jobs:
