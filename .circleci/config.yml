@@ -40,24 +40,25 @@ jobs:
             --s3-location bucket=${S3_CODEDEPLOYMENT_BUCKET},key=csye6225-webapp-${CIRCLE_BUILD_NUM}.zip,bundleType=zip \
             --region ${aws_region} \
             --output json
-  pr_check:
-    executor:
-      name: node/default
+  unit_test:
+    docker:
+      - image: circleci/node:12.13.0
     steps:
       - checkout
       - run: 
+        name: Unit Test
         command: |
           npm install
           npm test
 workflows:
   build_deploy:
       jobs:
-        - pr_check
+        - unit_test
         - install-package:
             filters:
               branches:
                 only: master
             requires:
-              - pr_check
+              - unit_test
              
             
