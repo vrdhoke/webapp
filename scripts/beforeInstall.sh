@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm  -rf /home/ubuntu/csye6225-webapp 
+sudo rm  -rf /home/ubuntu/csye6225-webapp 
