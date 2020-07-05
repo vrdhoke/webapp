@@ -1,8 +1,7 @@
 const express = require("express");
 const model = require("../models")
 const router = express.Router();
-var StatsD = require('node-statsd'),
-      client = new StatsD();
+
 var bunyan = require('bunyan');
 var log = bunyan.createLogger({
     name: 'webapp',

@@ -8,7 +8,8 @@ const upload = require("../routes/imageupload");
 const aws = require("aws-sdk");
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
-
+var StatsD = require('node-statsd'),
+      client = new StatsD();
 
 router.get("/getAllBooks",async(req,res)=>{
   const user = req.session.user;
@@ -103,7 +104,7 @@ router.get("/:id",async(req,res)=>{
   const book = await model.Book.findOne({
     where: { id: id },
   });
-
+  client.increment(book.title);
   if(user){
     return res.render("buybook",{
       ubook:book
