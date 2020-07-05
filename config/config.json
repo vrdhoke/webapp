@@ -1,9 +1,9 @@
 {
     "development": {
-        "username": "csye6225_su2020",
-        "password": "vrd141293",
-        "database": "csye6225",
-        "host": "csye6225-su2020.ctop3o9iy82s.us-east-1.rds.amazonaws.com",
+        "username": "root",
+        "password": "12345678",
+        "database": "cloudapp",
+        "host": "localhost",
         "dialect": "mysql",
         "operatorsAliases": false,
         "s3bucket": "webapp.vaibhav.dhoke",

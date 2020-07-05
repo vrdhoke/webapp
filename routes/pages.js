@@ -1,13 +1,23 @@
 const express = require("express");
 const model = require("../models")
 const router = express.Router();
-
+var StatsD = require('node-statsd'),
+      client = new StatsD();
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'webapp',
+    streams: [{
+        path: './log/application.log',
+    }]
+});
 router.get("/",(req,res)=>{
+    log.info('homeroute');
     res.status(200);
     res.render("login");
 });
 
 router.get("/register",(req,res)=>{
+    log.info('registrationroute');
     res.render("register");
 });
 
@@ -22,6 +32,7 @@ router.get("/changePassword",(req,res)=>{
 });
 
 router.get("/login",(req,res)=>{
+    log.info('loginroute');
     res.render("login");
 });
 
