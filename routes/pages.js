@@ -36,7 +36,7 @@ router.get("/login",(req,res)=>{
 });
 
 router.get("/updateprofile/:id",async(req,res)=>{
-    console.log(req.params.id);
+    log.info("userid "+req.params.id);
     
     let user = await model.User.findOne({
         where: { id:req.params.id},
@@ -50,7 +50,7 @@ router.get("/updateprofile/:id",async(req,res)=>{
 
 
 router.get("/logout",(req,res)=>{
-    console.log('Hi'+req.session.user);
+    log.info("Session user before logout "+req.session.user);
     req.session.destroy(err=>{
        if(err){
            return res.redirect('/home');
@@ -59,7 +59,6 @@ router.get("/logout",(req,res)=>{
        res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
        res.redirect('/'); 
     })
-    // console.log(req.session.user);
 });
 
 module.exports = router;

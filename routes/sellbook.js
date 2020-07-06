@@ -10,14 +10,20 @@ const upload = require("../routes/imageupload");
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'webapp',
+    streams: [{
+        path: './log/application.log',
+    }]
+});
 // const singleUpload = upload.array("image",3);
 
 router.post("/addbook",upload.array("image"),(req,res)=>{
     const user = req.session.user;
     const {isbn,title,author,pdate,qty,price} = req.body;
     
-    console.log("isbn "+isbn);
-    console.log("isbn "+req.body.isbn);
+    log.info("isbn from request in addbook"+req.body.isbn);
     if(user){
     // if (!(/^,?[a-zA-Z][a-zA-Z0-9]*,?$/.test(author)))
     if (!(/^\w+\s*\w*(,\w+\s*\w*)*$/.test(author)))
