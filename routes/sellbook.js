@@ -23,7 +23,7 @@ router.post("/addbook",upload.array("image"),(req,res)=>{
     const user = req.session.user;
     const {isbn,title,author,pdate,qty,price} = req.body;
     
-    log.info("isbn from request in addbook"+req.body.isbn);
+    log.info("isbn from request in addbook is "+req.body.isbn);
     if(user){
     // if (!(/^,?[a-zA-Z][a-zA-Z0-9]*,?$/.test(author)))
     if (!(/^\w+\s*\w*(,\w+\s*\w*)*$/.test(author)))
@@ -37,7 +37,7 @@ router.post("/addbook",upload.array("image"),(req,res)=>{
         price:price
       });
     }
-    console.log(req.files);
+    log.info("files from request "+req.files);
 
     if(req.fileValidationError){
       return res.render("addbook", {
@@ -75,7 +75,7 @@ router.post("/addbook",upload.array("image"),(req,res)=>{
             var fileKeys = Object.keys(req.files);
 
             fileKeys.forEach(function(key) {
-                console.log(req.files[key]);
+                log.info("files "+req.files[key]);
                 model.Image.create({
                   s3imagekey: req.files[key].key,
                   fileName: req.files[key].originalname,
@@ -83,10 +83,10 @@ router.post("/addbook",upload.array("image"),(req,res)=>{
                   bookid:newBook.id
                 })
                   .then((newBook) => {
-                    console.log(newBook);
+                    log.info("Image "+newBook);
                   })
                   .catch((err) => {
-                    console.log("Error UpLoading Image: ", err);
+                    log.info("Error UpLoading Image: ", err);
                   });
                 // return res.json({ imageUrl: req.file.key });
                 
@@ -99,7 +99,7 @@ router.post("/addbook",upload.array("image"),(req,res)=>{
           });
         })
         .catch((err) => {
-          console.log("Error while Adding Book : ", err);
+          log.info("Error while Adding Book : ", err);
         });
 
       }else{
@@ -109,12 +109,13 @@ router.post("/addbook",upload.array("image"),(req,res)=>{
 
 router.get("/getMyBooks",(req,res)=>{
   const user = req.session.user;
+  log.info("Books added by user route");
   if(user){
       model.User.findAll({where:{id:user.id},raw: true,include:['sellbook']})
       .then((User) => {
-        console.log(User);
+        // console.log(User);
         if(User.length==1 && User[0]["sellbook.id"]==null){
-          console.log("Hurray");
+          // console.log("Hurray");
           return res.render("mysellbooks", {
             flag:null,message:"You have not added any book for sale"
           });
@@ -125,7 +126,7 @@ router.get("/getMyBooks",(req,res)=>{
         }
       })
       .catch((err) => {
-        console.log("Error while fetching Book : ", err);
+        log.info("Error while fetching Book : ", err);
       });
     }else {
       return res.redirect('/');
@@ -144,7 +145,8 @@ router.get("/getMyBooks",(req,res)=>{
 
 
 router.post("/buyBooks/:id",(req,res)=>{
-
+  log.info("inside buybook route ");
+  log.info("Book id to be bought "+req.params.id);
   model.Book.update(
     { buyerId: 11},
     {
@@ -176,7 +178,7 @@ router.get("/addbook",(req,res)=>{
 
 router.get("/updatebook/:id",async(req,res)=>{
   const user = req.session.user;
-  
+  log.info("inside update book get route with book id "+req.params.id);
   if(user){
   let book = await model.Book.findOne({
     where: { id: req.params.id},
@@ -194,7 +196,7 @@ router.post("/updatebook",async(req,res)=>{
   const user = req.session.user;
   const {id,isbn,title,author,publicationDate,qty,price} = req.body
 
-  
+  log.info("inside update book post route  ");
 
   if (!(/^\w+\s*\w*(,\w+\s*\w*)*$/.test(author)))
     {
@@ -235,13 +237,13 @@ router.get("/deletebook/:id",async(req,res)=>{
   //   accessKeyId: config.accesskey,
   //   region: config.region,
   // });
-  
+  log.info("inside delete book GET route ");
   const s3 = new aws.S3();
   if(user){
   const images = await model.Image.findAll({
     where: { bookid:req.params.id },raw:true
   });
-  console.log(images);
+  // console.log(images);
   for (var i = 0; i < images.length; i++) { 
 
     var params = {
@@ -250,14 +252,15 @@ router.get("/deletebook/:id",async(req,res)=>{
      };
 
     s3.deleteObject(params, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log(data);           // successful response
+      if (err) log.info(err, err.stack); // an error occurred
+      else     log.info("Image deleted successfully "+data);           // successful response
     });
   }
   let book = await model.Book.destroy({
     where: { id: req.params.id},
   });
   if (book) {
+    log.info("Book deleted successfully ");
     return res.render('home', { updatemsg :"Book Deleted Successfully"}); 
   }
   }else {
@@ -273,16 +276,16 @@ router.get("/updateImage/:id",async(req,res)=>{
   //   accessKeyId: config.accesskey,
   //   region: config.region,
   // });
-  
+  log.info("inside update image GET route ");
   const s3 = new aws.S3();
   if(user){
     const images = await model.Image.findAll({
       where: { bookid:req.params.id },raw:true
     })
-    console.log(images)
+    // console.log(images)
     var s3image = [];
     for (var i = 0; i < images.length; i++) { 
-      console.log("Key "+images[i].s3imagekey);
+      // console.log("Key "+images[i].s3imagekey);
       await getImage(images[i].s3imagekey)
       .then((img)=>{
           s3image.push({skey:images[i].s3imagekey,simg:encode(img.Body)});
@@ -290,11 +293,11 @@ router.get("/updateImage/:id",async(req,res)=>{
           // html=html+image;
         
       }).catch((e)=>{
-        console.log("Error Vaibhav");
+        log.info("Error Getting Images from S3 bucket",e);
         res.send(e)
       })
     }
-    console.log(s3image.length);
+    log.info("Number of Images for book "+req.params.id+" are "+s3image.length);
     return res.render("updateImages", {
       simages: s3image,bookid:req.params.id
     });
@@ -325,7 +328,7 @@ router.get("/deleteImage/:id",async(req,res)=>{
   //   accessKeyId: config.accesskey,
   //   region: config.region,
   // });
-  
+  log.info("inside delete image GET route");
   const s3 = new aws.S3();
   if(user){
     const images = await model.Image.destroy({
@@ -338,8 +341,8 @@ router.get("/deleteImage/:id",async(req,res)=>{
      };
 
     s3.deleteObject(params, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log(data);           // successful response
+      if (err) log.info(err, err.stack); // an error occurred
+      else     log.info("Image Deleted successfully "+data);           // successful response
     });
 
     return res.render("updatebook", {
@@ -357,16 +360,16 @@ router.post("/addImage",upload.array("image"),(req,res)=>{
   const user = req.session.user;
   const bookid = req.body.bookid;
   
-  
+  log.info("inside addimage POST route");
   if(user){
   // if (!(/^,?[a-zA-Z][a-zA-Z0-9]*,?$/.test(author)))
   
-          console.log(req.files);
+          // console.log(req.files);
 
           var fileKeys = Object.keys(req.files);
 
           fileKeys.forEach(function(key) {
-              console.log(req.files[key]);
+              // console.log(req.files[key]);
               model.Image.create({
                 s3imagekey: req.files[key].key,
                 fileName: req.files[key].originalname,
@@ -374,10 +377,10 @@ router.post("/addImage",upload.array("image"),(req,res)=>{
                 bookid:bookid
               })
                 .then((newBook) => {
-                  console.log(newBook);
+                  log.info(newBook);
                 })
                 .catch((err) => {
-                  console.log("Error UpLoading Image: ", err);
+                  log.info("Error UpLoading Image: ", err);
                 });
               // return res.json({ imageUrl: req.file.key });
               
@@ -385,6 +388,7 @@ router.post("/addImage",upload.array("image"),(req,res)=>{
 
           
         // });
+        log.info("Image added successfully");
         return res.render("updatebook", {
           message: "Image added successfully",
         });

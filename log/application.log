@@ -1,3 +1,7 @@
 {"name":"webapp","hostname":"Vaibhavs-MacBook-Pro.local","pid":26937,"level":30,"msg":"homeroute","time":"2020-07-05T03:02:15.009Z","v":0}
 {"name":"webapp","hostname":"Vaibhavs-MacBook-Pro.local","pid":26989,"level":30,"msg":"registrationroute","time":"2020-07-05T03:03:30.314Z","v":0}
 {"name":"webapp","hostname":"Vaibhavs-MacBook-Pro.local","pid":26989,"level":30,"msg":"loginroute","time":"2020-07-05T03:03:40.702Z","v":0}
+{"name":"webapp","hostname":"Vaibhavs-MacBook-Pro.local","pid":31781,"level":30,"msg":"/Users/vaibhavdhoke/Documents/CloudNewRepo/webapp/public","time":"2020-07-06T17:13:26.184Z","v":0}
+{"name":"webapp","hostname":"Vaibhavs-MacBook-Pro.local","pid":31781,"level":30,"msg":"homeroute","time":"2020-07-06T17:13:26.794Z","v":0}
+{"name":"webapp","hostname":"Vaibhavs-MacBook-Pro.local","pid":31832,"level":30,"msg":"/Users/vaibhavdhoke/Documents/CloudNewRepo/webapp/public","time":"2020-07-06T17:14:29.745Z","v":0}
+{"name":"webapp","hostname":"Vaibhavs-MacBook-Pro.local","pid":31832,"level":30,"msg":"homeroute","time":"2020-07-06T17:14:30.330Z","v":0}

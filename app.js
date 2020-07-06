@@ -6,6 +6,13 @@ const session = require("express-session");
 var bodyParser = require('body-parser')
 const db = require("./models");
 var helpers = require('handlebars-helpers')();
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'webapp',
+    streams: [{
+        path: './log/application.log',
+    }]
+});
 // const db = mysql.createConnection({
 //     host: '127.0.0.1',
 //     user:'root',
@@ -18,7 +25,7 @@ var helpers = require('handlebars-helpers')();
 
 const publicDirectory = path.join(__dirname,'./public');
 
-console.log(publicDirectory);
+log.info(publicDirectory);
 app.use(express.static(publicDirectory));
 
 // app.use(express.urlencoded({ extended:false}));
@@ -63,7 +70,7 @@ app.use("/buybook",require("./routes/buybook"));
 
 db.sequelize.sync().then(()=>{
     app.listen(5000,()=>{
-        console.log("Server Started on port 5000");
+        log.info("Server Started on port 5000");
     })
 }) 
 

@@ -4,7 +4,13 @@ const model = require("../models")
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 var passwordValidator = require('password-validator');
-
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'webapp',
+    streams: [{
+        path: './log/application.log',
+    }]
+});
 var schema = new passwordValidator();
 schema
 .is().min(8)                                    // Minimum length 8
@@ -18,8 +24,8 @@ schema
 
 
 router.post('/register',async(req,res)=>{
-    console.log(req.body);
-    
+    // console.log(req.body);
+    log.info("in User registration route");
     const {firstname,lastname,email,password} = req.body;
     if (!(/^[A-Za-z]+([\ A-Za-z]+)*$/.test(firstname)))
     {
@@ -71,7 +77,7 @@ router.post('/register',async(req,res)=>{
           });
         })
         .catch((err) => {
-          console.log("Error while users creation : ", err);
+          log.info("Error while users creation : ", err);
         });
 
     // db.query('SELECT email FROM User WHERE email = ?',[email],async(error,results)=>{
@@ -114,6 +120,7 @@ router.post('/register',async(req,res)=>{
 });
 
 router.get('/home',async(req,res,next)=>{
+  log.info("In home GET route after login");
     let suser = req.session.user;
         if(suser){
           let user = await model.User.findOne({
@@ -127,7 +134,7 @@ router.get('/home',async(req,res,next)=>{
 })
 
 router.get('/profile',async(req,res,next)=>{
-    
+  log.info("In user profile GET route");
     let suser = req.session.user;
     if (suser) {
     let user = await model.User.findOne({
@@ -143,15 +150,15 @@ router.get('/profile',async(req,res,next)=>{
 
 router.post('/updateprofile',async(req,res,next)=>{
     let user = req.session.user;
-
+    log.info("In user updateprofile POST route");
     if(user){
 
     const id = req.body.id;
     const fname = req.body.fname;
     const lname = req.body.lname;
     // const password = req.body.password;
-    console.log(fname+" "+lname);
-    console.log("id "+id);
+    log.info("Name "+fname+" "+lname);
+    // console.log("id "+id);
     if (!(/^[A-Za-z]+([\ A-Za-z]+)*$/.test(fname)))
     {
       return res.render("updateprofile", {
@@ -190,7 +197,7 @@ router.post('/updateprofile',async(req,res,next)=>{
 
 router.post('/updatePassword',async (req,res,next)=>{
     let user = req.session.user;
-
+    log.info("In user updatePassword POST route");
     // const id = req.body.id;
     const password = req.body.password;
     const cpassword = req.body.cpassword;
@@ -215,12 +222,13 @@ router.post('/updatePassword',async (req,res,next)=>{
             }
           )
             .then(() => {
-              console.log("Done");
+              log.info("Password UPdated Successfully");
               return res.render("home", {
                 updatemsg: "Password Updated Successfully",
               });
             })
             .catch((err) => {
+                log.info("Password Update UnSuccessfully");
                 return res.render('home', { updatemsg :"Password Update UnSuccessful"}); 
             });    
 
@@ -243,7 +251,7 @@ router.post('/updatePassword',async (req,res,next)=>{
 router.post('/login',async(req,res)=>{
     try {
         const {email , password} = req.body;
-       
+        log.info("Inside login POST route");
         if(!email||!password){
             return res.status(400).render('login',{
                 message :'Please provide an Email Address and Password'
@@ -297,7 +305,7 @@ router.post('/login',async(req,res)=>{
         
 
     } catch (error) {
-        console.log(error);
+        log.info("Error while Login "+error);
     }
 })
 

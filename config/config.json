@@ -5,7 +5,7 @@
         "database": "cloudapp",
         "host": "localhost",
         "dialect": "mysql",
-        "operatorsAliases": false,
+        "operatorsAliases": 0,
         "s3bucket": "webapp.vaibhav.dhoke",
         "region": "us-east-1"
       },

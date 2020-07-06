@@ -10,9 +10,16 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 var StatsD = require('node-statsd'),
       client = new StatsD();
-
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'webapp',
+    streams: [{
+        path: './log/application.log',
+    }]
+});
 router.get("/getAllBooks",async(req,res)=>{
   const user = req.session.user;
+  log.info("In All books for sale route");
   if(user){
     //   model.Book.findAll({where:{sellerId:{[Op.ne]:user.id}},order: [
     //     ['isbn', 'ASC'],
@@ -36,7 +43,7 @@ router.get("/getAllBooks",async(req,res)=>{
         type: model.sequelize.QueryTypes.SELECT,
       }
     );
-    console.log(result);
+    log.info(result);
     if(result){
       return res.render("buybooks", {
               books:result
@@ -61,7 +68,7 @@ router.get("/getAllBooks",async(req,res)=>{
 
 router.get("/myCart",async(req,res)=>{
   const user = req.session.user;
-
+  log.info("In mycart GET route");
   // const userOrders = await model.UserOrders.findAll({
   //   where: { userid:user.id },raw:true
   // });
@@ -69,9 +76,9 @@ router.get("/myCart",async(req,res)=>{
   const user1 = await model.User.findAll({
     where: { id:user.id },include:['books'],raw:true
   }).then((User) => {
-    console.log(User[0]["books.id"]);
+    // console.log(User[0]["books.id"]);
     if(User.length==1 && User[0]["books.id"]==null){
-      console.log("Hurray");
+      // console.log("Hurray");
       return res.render("myCart", {
         flag:null,message:"Your Cart is Empty"
       });
@@ -110,7 +117,7 @@ router.get("/:id",async(req,res)=>{
       ubook:book
     })
   }
-  console.log("book "+book);
+  log.info("Book viewed to buy "+book);
 })
 
 
@@ -126,7 +133,7 @@ router.post("/buy",async(req,res)=>{
   //     console.log(user);
   //     // res.json(user)
   //   })
-  console.log("Hello "+user);
+  log.info("in buybook/buy POST route ");
 
   const book = await model.Book.findOne({
     where: { id: id },
@@ -137,7 +144,7 @@ router.post("/buy",async(req,res)=>{
       message:"This quanity is not available",ubook:book
     })
   }
-  console.log("book "+book);
+  log.info("book to be bought"+book);
 
 
    const userOrders = await model.UserOrders.findOne({
@@ -145,13 +152,13 @@ router.post("/buy",async(req,res)=>{
   });
 
   if(userOrders){
-    console.log(userOrders.quantity);
+    log.info("previous book bougth quantity "+userOrders.quantity);
     const totalquant = parseInt(qty) + userOrders.quantity
     await user.addBook(book,{ through: { quantity: totalquant} });  
   }else {
     await user.addBook(book,{ through: { quantity: qty } });
   }
-  console.log("Here") 
+  // console.log("Here") 
 
   model.Book.update(
     { quantity:book.quantity-qty},
@@ -176,7 +183,7 @@ router.post("/buy",async(req,res)=>{
     where: { id:user.id },
     include: ['books']
   });
-  console.log(result);
+  // console.log(result);
 
 
 
@@ -206,7 +213,7 @@ router.post("/buy",async(req,res)=>{
 
 router.get("/cartupdate/:id",async(req,res)=>{
   const user = req.session.user;
-
+  log.info("inside cartupdate GET route");
   if(user){
 
   let book = await model.Book.findOne({
@@ -231,7 +238,7 @@ router.post("/cartupdate",async(req,res)=>{
   const user = req.session.user;
   const updatedQuanity = req.body.qty;
   const id = req.body.id;
-
+  log.info("inside cartupdate POST route");
   let book = await model.Book.findOne({
     where: { id: id},
   });
@@ -272,7 +279,7 @@ router.post("/cartupdate",async(req,res)=>{
   const user1 = await model.User.findAll({
     where: { id:user.id },include:['books'],raw:true
   }).then((User) => {
-    console.log(User);
+    // console.log(User);
     return res.render("myCart", {
       books:User,flag:true
     });
@@ -287,7 +294,7 @@ router.get('/getImage/:id',async(req,res)=>{
       //   accessKeyId: config.accesskey,
       //   region: config.region,
       // });
-      
+      log.info("inside getImage GET route");
       const s3 = new aws.S3();
       const user = req.session.user;
 
@@ -298,10 +305,10 @@ router.get('/getImage/:id',async(req,res)=>{
       const images = await model.Image.findAll({
         where: { bookid:req.params.id },raw:true
       })
-      console.log(images)
+      // console.log(images)
       var s3image = [];
       for (var i = 0; i < images.length; i++) { 
-        console.log("Key "+images[i].s3imagekey);
+        // console.log("Key "+images[i].s3imagekey);
         await getImage(images[i].s3imagekey)
         .then((img)=>{
             s3image.push(encode(img.Body));
@@ -309,11 +316,11 @@ router.get('/getImage/:id',async(req,res)=>{
             // html=html+image;
           
         }).catch((e)=>{
-          console.log("Error Vaibhav");
+          log.info("Error getting Images from S3 bucket",e);
           res.send(e)
         })
       }
-      console.log(s3image.length);
+      // console.log(s3image.length);
       return res.render("viewImages", {
         simages: s3image
       });
