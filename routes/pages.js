@@ -9,6 +9,7 @@ var log = bunyan.createLogger({
         path: './log/application.log',
     }]
 });
+
 router.get("/",(req,res)=>{
     log.info('homeroute');
     res.status(200);
