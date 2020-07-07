@@ -25,7 +25,7 @@ var log = bunyan.createLogger({
 
 const publicDirectory = path.join(__dirname,'./public');
 
-log.info(publicDirectory);
+// log.info(publicDirectory);
 app.use(express.static(publicDirectory));
 
 // app.use(express.urlencoded({ extended:false}));
