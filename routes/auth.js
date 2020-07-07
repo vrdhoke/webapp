@@ -5,6 +5,8 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 var passwordValidator = require('password-validator');
 var bunyan = require('bunyan');
+var StatsD = require('node-statsd'),
+      client = new StatsD();
 var log = bunyan.createLogger({
     name: 'webapp',
     streams: [{
@@ -25,6 +27,7 @@ schema
 
 router.post('/register',async(req,res)=>{
     // console.log(req.body);
+    var start = new Date().getTime();
     log.info("in User registration route");
     const {firstname,lastname,email,password} = req.body;
     if (!(/^[A-Za-z]+([\ A-Za-z]+)*$/.test(firstname)))
@@ -116,7 +119,8 @@ router.post('/register',async(req,res)=>{
     //         }
     //     })
     // })
-
+    var end = new Date().getTime();
+    client.timing("registerpostrequest",end-start);
 });
 
 router.get('/home',async(req,res,next)=>{

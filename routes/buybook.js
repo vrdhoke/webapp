@@ -18,6 +18,7 @@ var log = bunyan.createLogger({
     }]
 });
 router.get("/getAllBooks",async(req,res)=>{
+  var start = new Date().getTime();
   const user = req.session.user;
   log.info("In All books for sale route");
   if(user){
@@ -45,6 +46,8 @@ router.get("/getAllBooks",async(req,res)=>{
     );
     log.info(result);
     if(result){
+      var end = new Date().getTime();
+      client.timing("getAllBooks",end-start);
       return res.render("buybooks", {
               books:result
        });
@@ -52,6 +55,8 @@ router.get("/getAllBooks",async(req,res)=>{
    
     }
     else{
+      var end = new Date().getTime();
+      client.timing("getAllBooks",end-start);
       res.redirect('/');
     }
       // model.User.findAll({where:{id:"12"},raw: true,
