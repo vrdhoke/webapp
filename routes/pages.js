@@ -62,6 +62,7 @@ router.get("/updateprofile/:id",async(req,res)=>{
 
 
 router.get("/logout",(req,res)=>{
+    var start = new Date().getTime();
     log.info("Session user before logout "+req.session.user);
     req.session.destroy(err=>{
        if(err){
@@ -71,6 +72,8 @@ router.get("/logout",(req,res)=>{
        res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
        res.redirect('/'); 
     })
+    var end = new Date().getTime();
+    client.timing("homeroute.logoutGETRequest",end-start);
 });
 
 module.exports = router;
