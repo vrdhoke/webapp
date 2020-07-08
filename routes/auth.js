@@ -49,7 +49,7 @@ router.post('/register',async(req,res)=>{
       });
     }
 
-      
+    
     let user = await model.User.findOne({
         where: { email: email },
       });
@@ -66,7 +66,7 @@ router.post('/register',async(req,res)=>{
                 });
     }
     let hashedPassword = await bcrypt.hash(password,8);
-
+    var startdb1 = new Date().getTime();
     model.User.create({
         firstname: firstname,
         lastname: lastname,
@@ -75,6 +75,8 @@ router.post('/register',async(req,res)=>{
       })
         .then((newUsers) => {
           // console.log(newUsers);
+          var enddb1 = new Date().getTime();
+          client.timing("usercreate.db",enddb1-startdb1);
           return res.render("login", {
             message: "User registered",
           });
@@ -124,35 +126,46 @@ router.post('/register',async(req,res)=>{
 });
 
 router.get('/home',async(req,res,next)=>{
+  var start = new Date().getTime();
   log.info("In home GET route after login");
     let suser = req.session.user;
         if(suser){
+          var startdb1 = new Date().getTime();
           let user = await model.User.findOne({
             where: { email: suser.email },
           });
+          var enddb1 = new Date().getTime();
+          client.timing("homepagefindUser.db",enddb1-startdb1); 
             res.render('home',{ message:"Welcome to Portal  "+user.firstname});
             return;
         }
         res.redirect('/');
-    
+  var end = new Date().getTime();
+  client.timing("homepageGETrequest",end-start);  
 })
 
 router.get('/profile',async(req,res,next)=>{
+  var start = new Date().getTime();
   log.info("In user profile GET route");
     let suser = req.session.user;
     if (suser) {
+    var startdb1 = new Date().getTime();
     let user = await model.User.findOne({
       where: { id:suser.id},
     });
+    var enddb1 = new Date().getTime();
+    client.timing("homepagefindUser.db",enddb1-startdb1); 
       return res.render("profile", {
         user: user
       });
     }else res.redirect('/');
-        
+    var end = new Date().getTime();
+    client.timing("userProfileGETrequest",end-start);     
 })
 
 
 router.post('/updateprofile',async(req,res,next)=>{
+    var start = new Date().getTime();
     let user = req.session.user;
     log.info("In user updateprofile POST route");
     if(user){
@@ -175,7 +188,7 @@ router.post('/updateprofile',async(req,res,next)=>{
         message: "Last Name is Invalid!",
       });
     }
-    
+    var startdb1 = new Date().getTime();
     await model.User.update(
         { firstname:fname,
         lastname:lname},
@@ -186,6 +199,8 @@ router.post('/updateprofile',async(req,res,next)=>{
         }
       )
         .then(() => {
+            var enddb1 = new Date().getTime();
+            client.timing("updateProfileuser.db",enddb1-startdb1);
             if(user){
                 return res.render('home', { updatemsg :"Details Updated Successfully"}); 
              }
@@ -197,9 +212,12 @@ router.post('/updateprofile',async(req,res,next)=>{
       }else{
         res.redirect('/');
       }
+      var end = new Date().getTime();
+      client.timing("updateProfilePOSTrequest",end-start);
 })
 
 router.post('/updatePassword',async (req,res,next)=>{
+    var start = new Date().getTime();
     let user = req.session.user;
     log.info("In user updatePassword POST route");
     // const id = req.body.id;
@@ -207,16 +225,21 @@ router.post('/updatePassword',async (req,res,next)=>{
     const cpassword = req.body.cpassword;
 
     if(password != cpassword){
+      var end = new Date().getTime();
+      client.timing("updatePasswordPOSTrequest",end-start);
         return res.render("changepassword",{
             message:"Password does not match"
         });
     }else if(!schema.validate(password)){
+        var end = new Date().getTime();
+        client.timing("updatePasswordPOSTrequest",end-start);
         return res.render("changepassword",{
             message:"Please enter strong password"
         });
     }else {
     
         let hashedPassword = await bcrypt.hash(password,8);
+        var startdb1 = new Date().getTime();
         model.User.update(
             { password:hashedPassword},
             {
@@ -226,16 +249,22 @@ router.post('/updatePassword',async (req,res,next)=>{
             }
           )
             .then(() => {
+              var enddb1 = new Date().getTime();
+              client.timing("updatePassword.db",enddb1-startdb1);
               log.info("Password UPdated Successfully");
+              var end = new Date().getTime();
+              client.timing("updatePasswordPOSTrequest",end-start);
               return res.render("home", {
                 updatemsg: "Password Updated Successfully",
               });
             })
             .catch((err) => {
                 log.info("Password Update UnSuccessfully");
+                var end = new Date().getTime();
+                client.timing("updatePasswordPOSTrequest",end-start);
                 return res.render('home', { updatemsg :"Password Update UnSuccessful"}); 
             });    
-
+            
 
     // const password = req.body.password;
     
@@ -247,12 +276,14 @@ router.post('/updatePassword',async (req,res,next)=>{
     //         }
     //         return res.render('home', { updatemsg :"Password Update UnSuccessful"}); 
     //     })
-    }     
+    }
+         
 })
 
 
 
 router.post('/login',async(req,res)=>{
+  var start = new Date().getTime();
     try {
         const {email , password} = req.body;
         log.info("Inside login POST route");
@@ -261,21 +292,29 @@ router.post('/login',async(req,res)=>{
                 message :'Please provide an Email Address and Password'
             });
         }
-
+        var startdb1 = new Date().getTime();
         let user = await model.User.findOne({
             where: { email: email },
           });
+          var enddb1 = new Date().getTime();
+          client.timing("loginfindUser.db",enddb1-startdb1);
           if (!user) {
+            var end = new Date().getTime();
+            client.timing("loginPOSTrequest",end-start);
             return res.render("login", {
               message: "Email id does not exists!",
             });
           }else if(!(await bcrypt.compare(password,user.password))){
+            var end = new Date().getTime();
+            client.timing("loginPOSTrequest",end-start);
             return res.render("login",{
                 message:"Password is incorrect"
             });
         } else {
             req.session.user = user;
             // res.json(user);
+            var end = new Date().getTime();
+            client.timing("loginPOSTrequest",end-start);
             res.redirect('/auth/home')
             // return res.render("home",{
             //     message: results[0].firstname+' '+ results[0].lastname
@@ -311,6 +350,7 @@ router.post('/login',async(req,res)=>{
     } catch (error) {
         log.info("Error while Login "+error);
     }
+    
 })
 
 

@@ -1,7 +1,8 @@
 const express = require("express");
 const model = require("../models")
 const router = express.Router();
-
+var StatsD = require('node-statsd'),
+      client = new StatsD();
 var bunyan = require('bunyan');
 var log = bunyan.createLogger({
     name: 'webapp',
@@ -11,14 +12,20 @@ var log = bunyan.createLogger({
 });
 
 router.get("/",(req,res)=>{
+    var start = new Date().getTime();
     log.info('homeroute');
     res.status(200);
     res.render("login");
+    var end = new Date().getTime();
+    client.timing("homeroute.GETRequest",end-start);
 });
 
 router.get("/register",(req,res)=>{
+    var start = new Date().getTime();
     log.info('registrationroute');
     res.render("register");
+    var end = new Date().getTime();
+    client.timing("homeroute.RegisterGETRequest",end-start);
 });
 
 
@@ -37,16 +44,20 @@ router.get("/login",(req,res)=>{
 });
 
 router.get("/updateprofile/:id",async(req,res)=>{
+    var start = new Date().getTime();
     log.info("userid "+req.params.id);
     
     let user = await model.User.findOne({
         where: { id:req.params.id},
       });
       if (user) {
+        var end = new Date().getTime();
+        client.timing("homeroute.updateProfileGETRequest",end-start);
         return res.render("updateprofile", {
           upuser: user
         });
       }
+      
 });
 
 

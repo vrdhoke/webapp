@@ -37,6 +37,7 @@ router.get("/getAllBooks",async(req,res)=>{
     //   .catch((err) => {
     //     console.log("Error while fetching Book : ", err);
     //   });
+    var startdb = new Date().getTime();
     const result = await model.sequelize.query(
       "SELECT firstName,lastName,Books.id,isbn,title,authors,publication_date,quantity,price FROM Books join Users on Books.sellerid=Users.id where Books.sellerid != (:id) and Books.quantity != (:q) order by isbn,price",
       {
@@ -44,6 +45,9 @@ router.get("/getAllBooks",async(req,res)=>{
         type: model.sequelize.QueryTypes.SELECT,
       }
     );
+    var enddb = new Date().getTime();
+    var end = new Date().getTime();
+    client.timing("getAllBook.db",enddb-startdb);
     log.info(result);
     if(result){
       var end = new Date().getTime();
@@ -72,15 +76,19 @@ router.get("/getAllBooks",async(req,res)=>{
 
 
 router.get("/myCart",async(req,res)=>{
+  var start = new Date().getTime();
   const user = req.session.user;
   log.info("In mycart GET route");
   // const userOrders = await model.UserOrders.findAll({
   //   where: { userid:user.id },raw:true
   // });
   if(user){
+    var startdb = new Date().getTime();
   const user1 = await model.User.findAll({
     where: { id:user.id },include:['books'],raw:true
   }).then((User) => {
+    var enddb = new Date().getTime();
+    client.timing("myCartGETrequest.db",enddb-startdb); 
     // console.log(User[0]["books.id"]);
     if(User.length==1 && User[0]["books.id"]==null){
       // console.log("Hurray");
@@ -94,7 +102,11 @@ router.get("/myCart",async(req,res)=>{
     }
     
   })
-  }else{
+  var end = new Date().getTime();
+  client.timing("myCartGETrequest",end-start);  
+}else{
+  var end = new Date().getTime();
+  client.timing("myCartGETrequest",end-start); 
     res.redirect('/');
   }
 
@@ -110,12 +122,15 @@ router.get("/myCart",async(req,res)=>{
 
 
 router.get("/:id",async(req,res)=>{
+  var start = new Date().getTime();
   const user = req.session.user;
   const id = req.params.id;
-
+  var startdb = new Date().getTime();
   const book = await model.Book.findOne({
     where: { id: id },
   });
+  var enddb = new Date().getTime();
+  client.timing("viewBookRequest.db",enddb-startdb); 
   client.increment(book.title);
   if(user){
     return res.render("buybook",{
@@ -123,11 +138,14 @@ router.get("/:id",async(req,res)=>{
     })
   }
   log.info("Book viewed to buy "+book);
+  var end = new Date().getTime();
+  client.timing("viewBookRequest",end-start); 
 })
 
 
 
 router.post("/buy",async(req,res)=>{
+  var start = new Date().getTime();
   const user1 = req.session.user;
   const id = req.body.id;
   const qty = req.body.qty;
@@ -139,11 +157,12 @@ router.post("/buy",async(req,res)=>{
   //     // res.json(user)
   //   })
   log.info("in buybook/buy POST route ");
-
+  var startdb1 = new Date().getTime();
   const book = await model.Book.findOne({
     where: { id: id },
   });
-
+  var enddb1 = new Date().getTime();
+  client.timing("buybook.findbook.db",enddb1-startdb1); 
   if(book.quantity<qty){
     return res.render("buybook",{
       message:"This quanity is not available",ubook:book
@@ -151,11 +170,12 @@ router.post("/buy",async(req,res)=>{
   }
   log.info("book to be bought"+book);
 
-
+  var startdb2 = new Date().getTime();
    const userOrders = await model.UserOrders.findOne({
     where: { userid:user.id,bookid:id }
   });
-
+  var enddb2 = new Date().getTime();
+  client.timing("buybook.findUserOrders.db",enddb2-startdb2); 
   if(userOrders){
     log.info("previous book bougth quantity "+userOrders.quantity);
     const totalquant = parseInt(qty) + userOrders.quantity
@@ -190,8 +210,8 @@ router.post("/buy",async(req,res)=>{
   });
   // console.log(result);
 
-
-
+  var end = new Date().getTime();
+  client.timing("buybook.buyPOSTRequest",end-start); 
   //Vaibhav
 
   // model.Book.update(
@@ -217,6 +237,7 @@ router.post("/buy",async(req,res)=>{
 })
 
 router.get("/cartupdate/:id",async(req,res)=>{
+  var start = new Date().getTime();
   const user = req.session.user;
   log.info("inside cartupdate GET route");
   if(user){
@@ -229,28 +250,40 @@ router.get("/cartupdate/:id",async(req,res)=>{
   });
 
   if (book) {
+    var end = new Date().getTime();
+    client.timing("buybook.cartupdateGETRequest",end-start); 
     return res.render("myCartUpdate", {
       ubook: book,qty:userOrders.quantity, aqty:book.quantity
     });
   }
 
   }else{
+    var end = new Date().getTime();
+    client.timing("buybook.cartupdateGETRequest",end-start);
     res.redirect('/');
   }
 })
 
 router.post("/cartupdate",async(req,res)=>{
+  var start = new Date().getTime();
   const user = req.session.user;
   const updatedQuanity = req.body.qty;
   const id = req.body.id;
   log.info("inside cartupdate POST route");
+
+  var startdb1 = new Date().getTime();
   let book = await model.Book.findOne({
     where: { id: id},
   });
+  var enddb1 = new Date().getTime();
+  client.timing("buybook.cartupdatefindbook.db",enddb1-startdb1);
 
+  var startdb2 = new Date().getTime();
   const userOrders = await model.UserOrders.findOne({
     where: { userid:user.id,bookid:id }
   });
+  var enddb2 = new Date().getTime();
+  client.timing("cartupdatefindUserOrders.db",enddb2-startdb2);
 
   if(parseInt(updatedQuanity)-userOrders.quantity > book.quantity){
     return res.render("myCartUpdate", {
@@ -260,6 +293,7 @@ router.post("/cartupdate",async(req,res)=>{
 
   const difference = parseInt(updatedQuanity) - userOrders.quantity;
 
+  var startdb3 = new Date().getTime();
   await model.UserOrders.update({
     quantity:updatedQuanity
   },
@@ -268,7 +302,8 @@ router.post("/cartupdate",async(req,res)=>{
       bookid:id, userid:user.id
     }
   })
-  
+  var enddb3 = new Date().getTime();
+  client.timing("cartupdateUserOrdersupdate.db",enddb3-startdb3);
    
   await model.Book.update(
     { 
@@ -280,7 +315,7 @@ router.post("/cartupdate",async(req,res)=>{
       }
     }
   )
-    
+  var startdb4 = new Date().getTime();  
   const user1 = await model.User.findAll({
     where: { id:user.id },include:['books'],raw:true
   }).then((User) => {
@@ -289,11 +324,15 @@ router.post("/cartupdate",async(req,res)=>{
       books:User,flag:true
     });
   })
+  var enddb4 = new Date().getTime();
+  client.timing("cartupdatefindUsers.db",enddb4-startdb4);
+  var end = new Date().getTime();
+  client.timing("buybook.cartupdatePOSTRequest",end-start);
 })
 
 
 router.get('/getImage/:id',async(req,res)=>{
-
+      var start = new Date().getTime();
       // aws.config.update({
       //   secretAccessKey: config.secretkey,
       //   accessKeyId: config.accesskey,
@@ -307,15 +346,21 @@ router.get('/getImage/:id',async(req,res)=>{
       //   where: { userid:user.id },raw:true
       // });
       if(user){
+      var startdb1 = new Date().getTime();
       const images = await model.Image.findAll({
         where: { bookid:req.params.id },raw:true
       })
+      var enddb1 = new Date().getTime();
+      client.timing("buybook.getImage.db",enddb1-startdb1); 
       // console.log(images)
       var s3image = [];
       for (var i = 0; i < images.length; i++) { 
         // console.log("Key "+images[i].s3imagekey);
+        var startS3 = new Date().getTime();
         await getImage(images[i].s3imagekey)
         .then((img)=>{
+          var endS3 = new Date().getTime();
+          client.timing("buybook.getImage.S3",endS3-startS3);
             s3image.push(encode(img.Body));
             // let image="<img src='data:image/jpeg;base64," + encode(img.Body) + "'" + "/>";
             // html=html+image;
@@ -350,6 +395,8 @@ router.get('/getImage/:id',async(req,res)=>{
             let base64 = buf.toString('base64');
             return base64
         }
+  var end = new Date().getTime();
+  client.timing("buybook.getImageRequest",end-start);      
   })
 
 module.exports = router;
