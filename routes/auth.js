@@ -301,13 +301,13 @@ router.post('/login',async(req,res)=>{
           if (!user) {
             var end = new Date().getTime();
             client.timing("loginPOSTrequest",end-start);
-            return res.render("login", {
+            return res.status(401).render("login", {
               message: "Email id does not exists!",
             });
           }else if(!(await bcrypt.compare(password,user.password))){
             var end = new Date().getTime();
             client.timing("loginPOSTrequest",end-start);
-            return res.render("login",{
+            return res.status(401).render("login",{
                 message:"Password is incorrect"
             });
         } else {
