@@ -10,6 +10,7 @@ var log = bunyan.createLogger({
         path: './log/application.log',
     }]
 });
+const AWS = require("aws-sdk");
 
 router.get("/",(req,res)=>{
     var start = new Date().getTime();
@@ -75,5 +76,49 @@ router.get("/logout",(req,res)=>{
     var end = new Date().getTime();
     client.timing("homeroute.logoutGETRequest",end-start);
 });
+
+router.get("/forgetPassword",(req,res)=>{
+    log.info('forgetpassword get route');
+    res.render("forgetPassword");
+});
+AWS.config.update({ region: "us-east-1" });
+router.post("/forgetPassword",async(req,res)=>{
+    log.info('forgetpassword Post route');
+    const params = {
+        Message: JSON.stringify({ emailAddress: req.body.email }),
+        TopicArn: "arn:aws:sns:us-east-1:934555267499:password_reset",
+      };
+    let user = await model.User.findOne({
+        where: { email: req.body.email },
+      });
+      if (!user) {
+        return res.status(401).render("forgetPassword", {
+          message: "Please use registered Email Address!",
+        });
+      }
+
+    
+      const sns = new AWS.SNS({ apiVersion: "2010-03-31" })
+        .publish(params)
+        .promise();
+  
+      sns
+        .then(function (data) {
+          logger.info(
+            `Message ${params.Message} send sent to the topic ${params.TopicArn}`
+          );
+          logger.info("MessageID is " + data.MessageId);
+          return res.render("forgotpassword", {
+            message: "Email sent successfully!",
+          });
+        })
+        .catch(function (err) {
+          logger.info(err, err.stack);
+          return res.render("forgotpassword", {
+            message: "Error, check logs!",
+          });
+        });
+});
+
 
 module.exports = router;
