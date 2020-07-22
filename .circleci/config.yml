@@ -55,9 +55,9 @@ workflows:
       jobs:
         - unit_test
         - install-package:
-            filters:
-              branches:
-                only: master
+            # filters:
+            #   branches:
+            #     only: master
             requires:
               - unit_test
              
