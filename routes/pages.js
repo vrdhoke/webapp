@@ -104,16 +104,16 @@ router.post("/forgetPassword",async(req,res)=>{
   
       sns
         .then(function (data) {
-          logger.info(
+          log.info(
             `Message ${params.Message} send sent to the topic ${params.TopicArn}`
           );
-          logger.info("MessageID is " + data.MessageId);
+          log.info("MessageID is " + data.MessageId);
           return res.render("forgetPassword", {
             message: "Email sent successfully!",
           });
         })
         .catch(function (err) {
-          logger.info(err, err.stack);
+          log.info(err, err.stack);
           return res.render("forgetPassword", {
             message: "Error, check logs!",
           });
