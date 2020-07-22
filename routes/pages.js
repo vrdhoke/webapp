@@ -85,7 +85,7 @@ AWS.config.update({ region: "us-east-1" });
 router.post("/forgetPassword",async(req,res)=>{
     log.info('forgetpassword Post route');
     const params = {
-        Message: JSON.stringify({ emailAddress: req.body.email }),
+        Message: JSON.stringify({ email: req.body.email }),
         TopicArn: "arn:aws:sns:us-east-1:934555267499:password_reset",
       };
     let user = await model.User.findOne({
