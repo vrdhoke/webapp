@@ -100,7 +100,6 @@ router.post("/forgetPassword",async(req,res)=>{
           message: "Please use registered Email Address!",
         });
       }
-
   
         awssns
         .then(function (data) {
