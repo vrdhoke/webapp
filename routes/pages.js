@@ -109,13 +109,13 @@ router.post("/forgetPassword",async(req,res)=>{
           );
           log.info("MessageID is " + data.MessageId);
           return res.render("forgetPassword", {
-            message: "Email sent successfully!",
+            message: "Action Completed!",
           });
         })
         .catch(function (err) {
           log.info(err, err.stack);
           return res.render("forgetPassword", {
-            message: "Error, check logs!",
+            message: "Something went wrong!",
           });
         });
 });
