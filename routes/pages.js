@@ -105,7 +105,7 @@ router.post("/forgetPassword",async(req,res)=>{
         .then(function (data) {
           log.info(`message ${params.Message} sent to ${params.TopicArn}`);
           return res.render("forgetPassword", {
-            message: "Mail Action Completed!"
+            message: "Your Request has been received!"
           });
         })
         .catch(function (err) {
