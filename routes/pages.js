@@ -88,9 +88,7 @@ router.post("/forgetPassword",async(req,res)=>{
         Message: JSON.stringify({ email: req.body.email }),
         TopicArn: "arn:aws:sns:us-east-1:934555267499:password_reset",
       };
-      const awssns = new AWS.SNS({ apiVersion: "2010-03-31" })
-        .publish(params)
-        .promise();
+      
     let user = await model.User.findOne({
         where: { email: req.body.email },
       });
@@ -100,7 +98,10 @@ router.post("/forgetPassword",async(req,res)=>{
           message: "Please use registered Email Address!",
         });
       }
-  
+      const awssns = new AWS.SNS({ apiVersion: "2010-03-31" })
+      .publish(params)
+      .promise();
+
         awssns
         .then(function (data) {
           log.info(`message ${params.Message} sent to ${params.TopicArn}`);
